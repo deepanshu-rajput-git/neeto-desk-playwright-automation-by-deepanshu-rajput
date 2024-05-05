@@ -18,7 +18,7 @@ setup.describe.serial("Logout feature", () => {
     await defaultPage.close();
     const context = await browser.newContext({ storageState: STORAGE_STATE });
     const page = await context.newPage();
-    await page.goto("/");
+    await page.goto("/admin")
     await page.waitForLoadState();
     const neetoPlaywrightUtilities = new CustomCommands(page, context.request);
 

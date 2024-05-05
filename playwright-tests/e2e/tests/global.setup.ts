@@ -3,6 +3,7 @@ import setup from "@fixtures";
 import { initializeCredentials, login } from "@neetoplaywright";
 
 setup("login", async ({ page, organizationPage, neetoPlaywrightUtilities }) => {
+  setup.slow();
   await setup.step("Step 1: Initialize credentials", () =>
     initializeCredentials(PRODUCT)
   );
