@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "target": "ES2019",
+    "moduleResolution": "Node",
+    "lib": ["ES2021", "dom"],
+    "baseUrl": "./e2e",
+    "noEmit": true,
+    "paths": {
+      /*
+       *This mapping is relative to "baseUrl".
+       */
+      "@auth/*": ["auth/*"],
+      "@config/*": ["config/*"],
+      "@selectors": ["constants/selectors"],
+      "@selectors/*": ["constants/selectors/*"],
+      "@constants/*": ["constants/*"],
+      "@routes": ["constants/routes.ts"],
+      "@fixtures/*": ["fixtures/*"],
+      "@fixtures": ["fixtures"],
+      "@poms/*": ["poms/*"],
+      "@poms": ["poms"],
+      "@tests/*": ["tests/*"],
+      "@utils/*": ["utils/*"],
+      "@neetoplaywright": [
+        "../node_modules/@bigbinary/neeto-playwright-commons"
+      ],
+      "@neetoplaywright/*": [
+        "../node_modules/@bigbinary/neeto-playwright-commons/*"
+      ]
+    }
+  }
+}
