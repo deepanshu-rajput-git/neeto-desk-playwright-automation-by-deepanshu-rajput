@@ -7,7 +7,12 @@ test.describe("Ticket Page", () => {
     test.beforeAll(() => {
         user = readFileSyncIfExists().user;
         ticketInfo = generateTicketInfo({ user });
-    })
+    });
+
+    test.afterEach(({ ticketPage, neetoPlaywrightUtilities }) =>
+        ticketPage.deleteTicket({ neetoPlaywrightUtilities, ticketInfo })
+    );
+
     test("should create a new ticket", async ({ page, ticketPage, neetoPlaywrightUtilities }) => {
         await test.step("Step 1: Navigate to home page", () =>
             page.goto("/"));

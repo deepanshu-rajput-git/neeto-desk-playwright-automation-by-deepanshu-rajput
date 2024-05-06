@@ -8,6 +8,12 @@ export interface TicketInfo {
     priority?: "Low" | "Medium" | "High" | "Urgent";
     category?: "None" | "Questions" | "Incident" | "Problem" | "Feature request" | "Refund";
 }
+export interface Options {
+    visibilityTimeout?: number;
+    textAssertionTimeout?: number;
+    retryTimeout?: number;
+}
+
 
 export const generateTicketInfo = ({
     user,

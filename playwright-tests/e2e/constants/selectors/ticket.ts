@@ -3,7 +3,9 @@ export const TICKET_BUTTON_SELECTORS = {
     groupSelectMenu: 'group-select-menu',
     agentSelectValueContainer: 'agent-select-value-container',
     agentSelectMenu: 'agent-select-menu',
-    categorySelector: '[name="category"]'
+    categorySelector: '[name="category"]',
+    trashSubLink: 'trash-sub-link',
+
 }
 
 export const TICKET_INPUT_FIELD_SELECTORS = {
