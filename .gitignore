@@ -1,0 +1,7 @@
+/neeto-playwright-initializer
+/playwright-tests/node_modules/
+/playwright-tests/test-results/
+/playwright-tests/playwright-report/
+/playwright-tests/blob-report/
+/playwright-tests/playwright/.cache/
+/playwright-tests/e2e/auth/*.json
