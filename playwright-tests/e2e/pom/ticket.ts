@@ -1,5 +1,7 @@
-import { COMMON_SELECTORS } from "@bigbinary/neeto-playwright-commons";
+import { COMMON_SELECTORS, NEETO_EDITOR_SELECTORS } from "@bigbinary/neeto-playwright-commons";
+import { COMMON_BUTTON_SELECTORS, TABLE_BODY_SELECTOR } from "@constants/common";
 import { Page, expect } from "@playwright/test";
+import { TICKET_BUTTON_SELECTORS, TICKET_INPUT_FIELD_SELECTORS } from "@selectors/ticket";
 
 export default class TicketPage {
     page: Page;
@@ -8,31 +10,37 @@ export default class TicketPage {
         this.page = page;
     }
 
-    createNewTicket = async ({ neetoPlaywrightUtilities }) => {
-        await this.page.getByTestId('add-new-ticket-button').click();
-        await this.page.getByTestId('tickets-subject-text-field').fill('Deepanshu ticket');
-        await this.page.getByTestId('tickets-customer-email-text-field').fill('oliver@example.com');
+    createNewTicket = async ({ neetoPlaywrightUtilities, user, groupName = "--", ticketInfo }) => {
+        await this.page.getByTestId(COMMON_BUTTON_SELECTORS.addNewTicketButton).click();
+        await this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.subjectField).fill(ticketInfo.subject);
+        await this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.customerEmailField).fill(ticketInfo.customerEmail);
         await neetoPlaywrightUtilities.selectOptionFromDropdown({
-            selectValueContainer: 'group-select-value-container',
-            selectMenu: 'groupt-select-menu',
-            value: '--'
+            selectValueContainer: TICKET_BUTTON_SELECTORS.groupSelectValueContainer,
+            selectMenu: TICKET_BUTTON_SELECTORS.groupSelectMenu,
+            value: groupName
         });
 
         await neetoPlaywrightUtilities.selectOptionFromDropdown({
-            selectValueContainer: 'agent-select-value-container',
-            selectMenu: 'agent-select-menu',
-            value: 'Deepanshu Rajput'
+            selectValueContainer: TICKET_BUTTON_SELECTORS.agentSelectValueContainer,
+            selectMenu: TICKET_BUTTON_SELECTORS.agentSelectMenu,
+            value: user.currentUserName,
         });
 
-        await this.page.getByTestId('neeto-editor-content').fill('Description');
+        await this.page.getByTestId(NEETO_EDITOR_SELECTORS.contentField).fill(ticketInfo.desc);
+        const selectContainer = this.page.locator(`${TICKET_BUTTON_SELECTORS.categorySelector}[data-cy="${COMMON_SELECTORS.selectValueContainer}"]`);
+        await expect(async () => {
+            await selectContainer.click();
+            await expect(this.page.getByTestId(COMMON_SELECTORS.dropdownMenu)).toBeVisible({
+                timeout: 9000,
+            });
+            await this.page.getByTestId(COMMON_SELECTORS.dropdownMenu).getByText(ticketInfo.category).click();
+            await expect(selectContainer).toContainText(ticketInfo.category, { timeout: 10000 });
+        }).toPass({ timeout: 20000 });
 
-        await neetoPlaywrightUtilities.selectOptionFromDropdown({
-            selectValueContainer: 'nui-select-value-container',
-            selectMenu: 'nui-select-menu',
-            value: 'Feature request'
-        });
-
+        await this.page.getByTestId(COMMON_SELECTORS.saveChangesButton).click();
         await expect(this.page.getByTestId(COMMON_SELECTORS.spinner)).toBeHidden();
-        await expect(this.page.locator('ant-table-container').getByRole('button', { name: 'Deepanshu ticket' })).toBeVisible();
+        await expect(this.page.locator(TABLE_BODY_SELECTOR)
+            .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }))
+            .toBeVisible();
     }
 }

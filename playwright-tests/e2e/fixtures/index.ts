@@ -22,4 +22,4 @@ export default test
       const ticketPage = new TicketPage(page);
       await use(ticketPage);
     }
-  })
+  });
