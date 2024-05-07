@@ -1,4 +1,4 @@
-import { commands, i18nFixture, CustomFixture, EditorPage, } from "@neetoplaywright";
+import { commands, i18nFixture, CustomFixture, EditorPage, SidebarSection, } from "@neetoplaywright";
 import { test } from "@playwright/test";
 
 import { Poms, poms } from "./poms";
@@ -7,6 +7,7 @@ import TicketPage from "pom/ticket";
 interface ExtendedFixture {
   ticketPage: TicketPage,
   editorPage: EditorPage,
+  sidebarSection: SidebarSection,
 }
 
 export default test
@@ -27,5 +28,10 @@ export default test
     editorPage: async ({ page, neetoPlaywrightUtilities }, use) => {
       const customEditorPage = new EditorPage(page, neetoPlaywrightUtilities);
       use(customEditorPage);
-    }
+    },
+
+    sidebarSection: async ({ page, neetoPlaywrightUtilities }, use) => {
+      const sidebarSection = new SidebarSection(page, neetoPlaywrightUtilities);
+      use(sidebarSection);
+    },
   });

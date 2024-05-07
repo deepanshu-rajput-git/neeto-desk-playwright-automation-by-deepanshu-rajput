@@ -2,6 +2,7 @@ export const PRODUCT = "desk";
 export const UNRESOLVED_TICKETS = "Unresolved tickets";
 export const TABLE_BODY_SELECTOR = '.ant-table-body';
 export const ALERT_BOX = 'alert-box';
+export const THREE_DOTS_SPINNER = '.ant-spin-dot-spin';
 
 export const COMMON_BUTTON_SELECTORS = {
     addNewTicketButton: 'add-new-ticket-button',
@@ -19,5 +20,12 @@ export const COMMON_INPUT_FIELD = {
 export const COMMON_TEXTS = {
     moveToTrash: 'Move to trash',
     deleteForever: 'Delete forever',
+
+}
+
+export const COMMON_CLASS_SELECTORS = {
+    capitalize: '.capitalize',
+    truncate: '.truncate',
+    inline: '.inline',
 
 }

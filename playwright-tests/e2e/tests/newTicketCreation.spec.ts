@@ -1,7 +1,9 @@
-import { EditorPage, readFileSyncIfExists } from "@bigbinary/neeto-playwright-commons";
+import { readFileSyncIfExists } from "@bigbinary/neeto-playwright-commons";
 import test from "../fixtures/index";
 import { TicketInfo, generateTicketInfo } from "@constants/utils";
 import { COMMON_BUTTON_SELECTORS } from "@constants/common";
+import { faker } from "@faker-js/faker";
+import { TICKET_BUTTON_SELECTORS, TICKET_INPUT_FIELD_SELECTORS } from "@selectors/ticket";
 
 test.describe("Ticket Page", () => {
     let user = {}, ticketInfo: TicketInfo;
@@ -10,54 +12,34 @@ test.describe("Ticket Page", () => {
         ticketInfo = generateTicketInfo({ user });
     });
 
-    // test.beforeEach(async(page)=>{
-    //     await page.goto("/");
-    // });
-
-    test("should create a new ticket", async ({ page, ticketPage, neetoPlaywrightUtilities }) => {
+    test("should create a new ticket", async ({ page, ticketPage, neetoPlaywrightUtilities, sidebarSection }) => {
         await test.step("Step 1: Navigate to home page", () =>
             page.goto("/"));
 
-        await test.step("Step 2: Creating a new ticket", async () => {
-            await ticketPage.createNewTicket({ neetoPlaywrightUtilities, user, ticketInfo, });
-            await ticketPage.deleteTicket({ neetoPlaywrightUtilities, ticketInfo });
+        await test.step("Step 2: Create a new ticket", async () =>
+            await ticketPage.createNewTicket({ neetoPlaywrightUtilities, user, ticketInfo }));
+
+        await test.step("Step 3: Verify details of newly created ticket", () =>
+            ticketPage.verifyDetailsOfTicket({ ticketInfo, user }));
+
+        await test.step("Step 4: Verify the newly created ticket in tables", async () => {
+            const labels = [TICKET_BUTTON_SELECTORS.unresolvedLabel, TICKET_BUTTON_SELECTORS.assignedToMeLabel, TICKET_BUTTON_SELECTORS.assignedLabel, TICKET_BUTTON_SELECTORS.allTicketsLabel];
+            await ticketPage.verifyInTable({ subject: ticketInfo.subject, labels, sidebarSection });
         });
-    })
-    test("should not create new ticket if subject is empty", async ({ page, ticketPage }) => {
-        await test.step("Step 1: Navigate to home page", () =>
-            page.goto("/"));
 
-        await test.step("Step 2: Attempt to create a new ticket without subject", () =>
-            ticketPage.attemptToCreateNewTicket({ agent: user, ticketInfo: { ...ticketInfo, subject: "" } })
-        )
+        await test.step("Step 5: Delete the newly created ticket", () =>
+            ticketPage.deleteTicket({ neetoPlaywrightUtilities, ticketInfo, sidebarSection }));
     });
 
-    test("should not create new ticket if customer email is invlaid or empty", async ({ page, ticketPage }) => {
+    test("should not create new ticket without required fields", async ({ page, ticketPage }) => {
         await test.step("Step 1: Navigate to home page", () =>
             page.goto("/"));
 
-        await test.step("Step 2: Attempt to create a new ticket with invalid email", () =>
-            ticketPage.attemptToCreateNewTicket({ agent: user, ticketInfo: { ...ticketInfo, customerEmail: "abcd" } })
-        );
-    })
-
-    test("should not create new ticket if agent name is empty", async ({ page, ticketPage }) => {
-        await test.step("Step 1: Navigate to home page", () =>
-            page.goto("/"));
-
-        await test.step("Step 2: Attempt to create a new ticket without agent name", () =>
-            ticketPage.attemptToCreateNewTicket({ agent: { ...user, currentUserName: "" }, ticketInfo })
-        )
-    })
-
-    test("should not create new ticket if desc is empty", async ({ page, ticketPage }) => {
-        await test.step("Step 1: Navigate to home page", () =>
-            page.goto("/"));
-
-        await test.step("Step 2: Attempt to create a new ticket without desc", () =>
-            ticketPage.attemptToCreateNewTicket({ agent: user, ticketInfo: { ...ticketInfo, desc: "" } })
-        )
-    })
+        await test.step("Step 2: Attempt to create a new ticket", async () => {
+            const sampleText = faker.word.sample();
+            await ticketPage.attemptToCreateNewTicket({ subject: "", customerEmail: sampleText, agentName: "", desc: "" })
+        });
+    });
 
     test("should verify the functionalities of decription editor", async ({ page, editorPage }) => {
         await test.step("Step 1: Navigate to home page", () =>
@@ -65,12 +47,11 @@ test.describe("Ticket Page", () => {
 
         await test.step("Step 2: Verify the description editor", async () => {
             await page.getByTestId(COMMON_BUTTON_SELECTORS.addNewTicketButton).click();
+            const sampleText = faker.word.sample();
             await editorPage.verifyDescriptionEditor({
-                text: "tickets.updated_one",
-                cannedResponseSuccessMessage: "messages.successCannedResponse",
+                text: sampleText,
+                cannedResponseSuccessMessage: TICKET_INPUT_FIELD_SELECTORS.cannedResponseSuccessMessage,
             });
         })
     });
-
-
 })
