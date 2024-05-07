@@ -23,6 +23,7 @@ export const COMMON_TEXTS = {
     moveToTrash: 'Move to trash',
     deleteForever: 'Delete forever',
     reportSpam: 'Report spam',
+    mergeTicket: 'Merge into another ticket',
 
 }
 
