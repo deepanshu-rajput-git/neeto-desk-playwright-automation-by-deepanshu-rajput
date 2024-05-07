@@ -4,11 +4,13 @@ export const TABLE_BODY_SELECTOR = '.ant-table-body';
 export const ALERT_BOX = 'alert-box';
 export const THREE_DOTS_SPINNER = '.ant-spin-dot-spin';
 
+
 export const COMMON_BUTTON_SELECTORS = {
     addNewTicketButton: 'add-new-ticket-button',
     alertSubmitButton: 'alert-submit-button',
     takeActionDropdown: 'take-action-dropdown-icon',
     takeActionDropdownContainer: 'take-action-dropdown-container',
+
 
 }
 
@@ -20,6 +22,7 @@ export const COMMON_INPUT_FIELD = {
 export const COMMON_TEXTS = {
     moveToTrash: 'Move to trash',
     deleteForever: 'Delete forever',
+    reportSpam: 'Report spam',
 
 }
 
@@ -27,5 +30,5 @@ export const COMMON_CLASS_SELECTORS = {
     capitalize: '.capitalize',
     truncate: '.truncate',
     inline: '.inline',
-
+    dialogBox: '[role="dialog"]',
 }

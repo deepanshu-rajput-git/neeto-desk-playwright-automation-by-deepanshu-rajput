@@ -9,10 +9,12 @@ export const TICKET_BUTTON_SELECTORS = {
     statusSelector: '[name="status"]',
     unresolvedLabel: 'unresolved',
     trashLabel: 'trash',
+    spamLabel: 'spam',
     assignedToMeLabel: 'assignedtome',
     assignedLabel: 'assigned',
     allTicketsLabel: 'all',
     ticketStatusDropdown: 'tickets-status-dropdown',
+    ticketSubjectButton: 'tickets-subject-button'
 }
 
 export const TICKET_INPUT_FIELD_SELECTORS = {

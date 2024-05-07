@@ -26,7 +26,7 @@ export default class TicketPage {
         }).toPass({ timeout: 20000 });
     }
 
-    verifyInTable = async ({ subject, labels, sidebarSection }) => {
+    verifyTicketInDifferentTables = async ({ subject, labels, sidebarSection }) => {
         await this.page.goto('/');
         for (const label of labels) {
             await sidebarSection.clickOnSubLink(label);
@@ -169,9 +169,11 @@ export default class TicketPage {
             .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') })).toBeHidden();
     }
 
-    deleteTicket = async ({ neetoPlaywrightUtilities, ticketInfo, sidebarSection }) => {
-        await this.moveTicketToTrash({ neetoPlaywrightUtilities, ticketInfo });
-        await sidebarSection.clickOnSubLink(TICKET_BUTTON_SELECTORS.trashLabel);
+    deleteTicket = async ({ neetoPlaywrightUtilities, ticketInfo, sidebarSection, canDelete = false }) => {
+        if (!canDelete) {
+            await this.moveTicketToTrash({ neetoPlaywrightUtilities, ticketInfo });
+            await sidebarSection.clickOnSubLink(TICKET_BUTTON_SELECTORS.trashLabel);
+        }
         await this.page.locator(TABLE_BODY_SELECTOR)
             .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).locator(COMMON_INPUT_FIELD.checkBoxInput).click();
 
@@ -184,5 +186,13 @@ export default class TicketPage {
 
         await expect(this.page.locator(TABLE_BODY_SELECTOR)
             .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') })).toBeHidden();
+    }
+
+    // should be used on ticket details page only
+    verifyShortcutActionKey = async ({ key, actionTitle }: { key: string, actionTitle: string }) => {
+        await this.page.keyboard.press(key);
+        await expect(this.page.getByTestId(ALERT_BOX)).toBeVisible();
+        await expect(this.page.getByTestId(COMMON_SELECTORS.alertTitle)).toContainText(new RegExp(actionTitle, 'i'));
+        await this.page.getByTestId(COMMON_SELECTORS.alertModalCrossIcon).click();
     }
 }
