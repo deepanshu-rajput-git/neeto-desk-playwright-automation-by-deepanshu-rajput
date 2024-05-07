@@ -117,5 +117,45 @@ test.describe("Ticket actions", () => {
         })
     });
 
+    test("should move the newly created ticket to trash", async ({ page, ticketPage, neetoPlaywrightUtilities, sidebarSection }) => {
+        await test.step("Step 1: Navigate to home page", () =>
+            page.goto("/"));
+
+        await test.step("Step 2: Create a new ticket", async () => {
+            await ticketPage.createNewTicket({ neetoPlaywrightUtilities, user, ticketInfo });
+            await expect(page.locator(TABLE_BODY_SELECTOR)
+                .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') })).toBeVisible();
+        });
+
+        await test.step("Step 3: Move the ticket to trash", async () => {
+            await page.locator(TABLE_BODY_SELECTOR)
+                .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).getByTestId(TICKET_BUTTON_SELECTORS.ticketSubjectButton).click();
+
+            await test.step("Verify if shortcut for trashing the ticket works", async () => {
+                await expect(page.getByTestId(COMMON_SELECTORS.pageLoader)).toBeHidden();
+                await ticketPage.verifyShortcutActionKey({ key: TICKET_ACTION_BUTTON_SELECTORS.keyToMoveToTrash, actionTitle: COMMON_TEXTS.moveToTrash })
+            })
+
+            await ticketPage.performActionFromDropdown({
+                selectValueContainer: TICKET_ACTION_BUTTON_SELECTORS.subheaderActionsDropdown,
+                selectMenu: COMMON_SELECTORS.dropdownContainer,
+                value: COMMON_TEXTS.moveToTrash,
+                neetoPlaywrightUtilities,
+            });
+
+            await neetoPlaywrightUtilities.verifyToast({ closeAfterVerification: false });
+            await page.reload();
+            await expect(page.getByTestId(COMMON_SELECTORS.pageLoader)).toBeHidden();
+        });
+
+        await test.step("Step 4: Navigate to trash", () =>
+            sidebarSection.clickOnSubLink(TICKET_BUTTON_SELECTORS.trashLabel));
+
+        await test.step("Step 5: Verify details of trashed ticket", () =>
+            ticketPage.verifyDetailsOfTicket({ ticketInfo: { ...ticketInfo, status: "Trash" }, user }));
+
+        await test.step("Step 6: Deleting the trashed ticket", async () =>
+            await ticketPage.deleteTicket({ neetoPlaywrightUtilities, ticketInfo, sidebarSection, canDelete: true }));
+    });
 
 })
