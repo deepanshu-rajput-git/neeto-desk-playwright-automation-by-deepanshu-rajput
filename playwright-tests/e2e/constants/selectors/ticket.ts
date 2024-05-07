@@ -5,6 +5,8 @@ export const TICKET_BUTTON_SELECTORS = {
     agentSelectMenu: 'agent-select-menu',
     categorySelector: '[name="category"]',
     trashSubLink: 'trash-sub-link',
+    prioritySelector: '[name="priority"]',
+    statusSelector: '[name="status"]',
 
 }
 
