@@ -24,6 +24,7 @@ export const COMMON_TEXTS = {
     deleteForever: 'Delete forever',
     reportSpam: 'Report spam',
     mergeTicket: 'Merge into another ticket',
+    printTicket: 'Print ticket',
 
 }
 
