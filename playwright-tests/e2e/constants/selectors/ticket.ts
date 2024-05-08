@@ -17,6 +17,8 @@ export const TICKET_BUTTON_SELECTORS = {
     ticketStatusDropdown: 'tickets-status-dropdown',
     ticketSubjectButton: 'tickets-subject-button',
     customerBlockModalSubmit: 'customer-block-modal-submit-button',
+    ticketsNavTab: 'tickets-nav-tab',
+
 }
 
 export const TICKET_INPUT_FIELD_SELECTORS = {

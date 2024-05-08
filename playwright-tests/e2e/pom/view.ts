@@ -1,8 +1,7 @@
-import { COMMON_SELECTORS, NEETO_EDITOR_SELECTORS } from "@bigbinary/neeto-playwright-commons";
-import { ALERT_BOX, COMMON_BUTTON_SELECTORS, COMMON_CLASS_SELECTORS, COMMON_INPUT_FIELD, COMMON_TEXTS, TABLE_BODY_SELECTOR, THREE_DOTS_SPINNER } from "@constants/common";
+import { COMMON_BUTTON_SELECTORS } from "@constants/common";
 import { Page, expect } from "@playwright/test";
-import { TICKET_BUTTON_SELECTORS, TICKET_INPUT_FIELD_SELECTORS } from "@selectors/ticket";
-import { Options, ViewInfo, isValidEmail } from "../constants/utils";
+import { ViewInfo } from "../constants/utils";
+import { VIEW_SELECTORS } from "@selectors/addNewView";
 
 export default class ViewPage {
     page: Page;
@@ -12,28 +11,28 @@ export default class ViewPage {
     }
 
     attemptToCreateNewView = async ({ viewInfo }: { viewInfo: ViewInfo }) => {
-        const submitButton = this.page.getByTestId('form-submit-button');
+        const submitButton = this.page.getByTestId(COMMON_BUTTON_SELECTORS.formSubmitButton);
         if (!viewInfo.name) {
             await expect(async () => {
-                await this.page.getByTestId('name-input-field').fill(viewInfo.name);
-                await this.page.getByTestId('description-text-input').click();
-                await expect(this.page.getByTestId('name-input-error')).toBeVisible({ timeout: 10000 });
+                await this.page.getByTestId(VIEW_SELECTORS.nameField).fill(viewInfo.name);
+                await this.page.getByTestId(VIEW_SELECTORS.descTextInput).click();
+                await expect(this.page.getByTestId(VIEW_SELECTORS.nameInputEror)).toBeVisible({ timeout: 10000 });
                 await submitButton.scrollIntoViewIfNeeded();
                 await expect(submitButton).toBeDisabled();
             }).toPass({ timeout: 5000 });
         }
 
         if (!viewInfo.sortOrder.field) {
-            await this.page.getByTestId('field-select-value-container').click();
-            await this.page.getByTestId('direction-select-value-container').click();
-            await expect(this.page.getByTestId('field-select-error')).toBeVisible({ timeout: 10000 });
+            await this.page.getByTestId(VIEW_SELECTORS.fieldSelectValueContainer).click();
+            await this.page.getByTestId(VIEW_SELECTORS.directionSelectValueContainer).click();
+            await expect(this.page.getByTestId(VIEW_SELECTORS.fieldSelectError)).toBeVisible({ timeout: 10000 });
         }
 
         if (!viewInfo.sortOrder.direction) {
-            await this.page.getByTestId('field-select-value-container').click();
-            await expect(this.page.getByTestId('direction-select-error')).toBeVisible({ timeout: 10000 });
+            await this.page.getByTestId(VIEW_SELECTORS.fieldSelectValueContainer).click();
+            await expect(this.page.getByTestId(VIEW_SELECTORS.directionSelectError)).toBeVisible({ timeout: 10000 });
             await expect(submitButton).toBeDisabled();
         }
-        await this.page.getByTestId('cancel-button').click();
+        await this.page.getByTestId(COMMON_BUTTON_SELECTORS.cancelButton).click();
     }
 }

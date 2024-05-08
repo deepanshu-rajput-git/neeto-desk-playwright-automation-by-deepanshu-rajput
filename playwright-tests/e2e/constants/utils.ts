@@ -33,12 +33,21 @@ export interface ViewInfo {
     desc: string;
     active?: boolean;
     condition: {
-        field: "created",
-        verb: "Any time",
-        value?: string,
+        field: "created" | "channel" | "customer email" | "subject" | "description" | "latest comment" | "any comment"
+        | "subject or description" | "status" | "category" | "priority" | "company" | "assigned agent" | "assigned group"
+        | "received for email" | "tags" | "submitter role" | "hours since created" | "hourse since updated by agent or customer"
+        | "hours since updated by customer" | "hourse since updated by agent" | "hours since first assigned" | "hourse since last assigned"
+        | "hours since new" | "hours since open" | "hours since on hold" | "hours since waiting on customer" | "agent out of office" | "feedback" | "",
+
+        verb: "Any time" | "During" | "Not during" | "Is" | "Is not" | "Contains" | "Does not contain" | "Starts with" | "Ends with"
+        | "Contains any of" | "Contains none of" | "Contains all of" | "Less than" | "Greater than" | ""
+        ,
+        value?: "UI" | "Email" | "Chat" | "API" | "Web form" | "New" | "Open" | "Waiting on customer" | "On hold" | "Closed" | "Spam" | "Trash"
+        | "None" | "Questions" | "Incident" | "Problem" | "Feature request" | "Refund" | "Low" | "Medium" | "Urgent" | "High" | "Unassigned" | "support.deepu@neetodeskemail.net"
+        | "feature-request" | "sales" | "feedback" | "refund" | "Admin" | "Agent" | "Yes" | "No" | "Any" | "Great" | "Okay" | "Not Good",
     },
     sortOrder: {
-        field: "Number" | "",
+        field: "Number" | "Created Date" | "Last Modified" | "Priority" | "Status" | "",
         direction: "Ascending" | "Descending" | "",
     }
     availability: "MySelf" | "All agents"
