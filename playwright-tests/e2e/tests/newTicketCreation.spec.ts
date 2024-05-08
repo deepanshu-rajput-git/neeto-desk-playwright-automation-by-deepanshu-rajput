@@ -24,7 +24,7 @@ test.describe("Ticket Page", () => {
 
         await test.step("Step 4: Verify the newly created ticket in tables", async () => {
             const labels = [TICKET_BUTTON_SELECTORS.unresolvedLabel, TICKET_BUTTON_SELECTORS.assignedToMeLabel, TICKET_BUTTON_SELECTORS.assignedLabel, TICKET_BUTTON_SELECTORS.allTicketsLabel];
-            await ticketPage.verifyInTable({ subject: ticketInfo.subject, labels, sidebarSection });
+            await ticketPage.verifyTicketInDifferentTables({ subject: ticketInfo.subject, labels, sidebarSection });
         });
 
         await test.step("Step 5: Delete the newly created ticket", () =>

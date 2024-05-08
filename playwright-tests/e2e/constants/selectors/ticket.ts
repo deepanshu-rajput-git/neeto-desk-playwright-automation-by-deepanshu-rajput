@@ -9,10 +9,14 @@ export const TICKET_BUTTON_SELECTORS = {
     statusSelector: '[name="status"]',
     unresolvedLabel: 'unresolved',
     trashLabel: 'trash',
+    spamLabel: 'spam',
     assignedToMeLabel: 'assignedtome',
     assignedLabel: 'assigned',
     allTicketsLabel: 'all',
+    closedTicketsLabel: 'closed',
     ticketStatusDropdown: 'tickets-status-dropdown',
+    ticketSubjectButton: 'tickets-subject-button',
+    customerBlockModalSubmit: 'customer-block-modal-submit-button',
 }
 
 export const TICKET_INPUT_FIELD_SELECTORS = {
@@ -23,5 +27,13 @@ export const TICKET_INPUT_FIELD_SELECTORS = {
     agentSelectError: 'agent-select-error',
     neetoEditorError: 'neeto-editor-error-text',
     cannedResponseSuccessMessage: "messages.successCannedResponse",
+
+}
+
+export const TICKET_STATUS = {
+    spam: "Spam",
+    trash: "Trash",
+    waitingOnCustomer: "Waiting on customer",
+    closed: "Closed",
 
 }
