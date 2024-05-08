@@ -47,7 +47,7 @@ test.describe("Ticket actions", () => {
                 neetoPlaywrightUtilities,
             });
 
-            const blockCustomerModal = page.locator(`'${COMMON_CLASS_SELECTORS.dialogBox}'`);
+            const blockCustomerModal = page.locator(COMMON_CLASS_SELECTORS.dialogBox);
             if (blockCustomerModal.isVisible()) {
                 await page.getByTestId(COMMON_SELECTORS.alertModalCrossIcon).click();
             }
@@ -96,7 +96,6 @@ test.describe("Ticket actions", () => {
 
             const blockCustomerModal = page.locator(`'${COMMON_CLASS_SELECTORS.dialogBox}'`);
             if (await blockCustomerModal.isVisible()) {
-                await page.getByTestId(COMMON_SELECTORS.alertModalCrossIcon).click();
                 await expect(page.getByTestId(COMMON_BUTTON_SELECTORS.modalHeader)).toContainText(new RegExp(TICKET_ACTION_TEXTS.blockCustomer, 'i'));
                 await page.getByTestId(TICKET_BUTTON_SELECTORS.customerBlockModalSubmit).click();
                 await expect(page.locator(BUTTON_SPINNER)).toBeHidden();
@@ -226,13 +225,13 @@ test.describe("Ticket actions", () => {
         await test.step("Step 6: Verify parent ticket in all tickets view", async () => {
             await sidebarSection.clickOnSubLink(TICKET_BUTTON_SELECTORS.allTicketsLabel);
             await expect(page.locator(THREE_DOTS_SPINNER)).toBeHidden({ timeout: 10000 });
-            ticketPage.verifyDetailsOfTicket({ ticketInfo: { ...ticketsInfo[0], status: TICKET_STATUS.waitingOnCustomer }, user });
+            await ticketPage.verifyDetailsOfTicket({ ticketInfo: { ...ticketsInfo[0], status: TICKET_STATUS.waitingOnCustomer }, user });
         })
 
         await test.step("Step 7: Verify child ticket in closed tickets view", async () => {
             await sidebarSection.clickOnSubLink(TICKET_BUTTON_SELECTORS.closedTicketsLabel);
             await expect(page.locator(THREE_DOTS_SPINNER)).toBeHidden({ timeout: 10000 });
-            ticketPage.verifyDetailsOfTicket({ ticketInfo: { ...ticketsInfo[1], status: TICKET_STATUS.closed }, user });
+            await ticketPage.verifyDetailsOfTicket({ ticketInfo: { ...ticketsInfo[1], status: TICKET_STATUS.closed }, user });
         })
 
         await test.step("Step 8: Deleting the newly created ticket", async () => {

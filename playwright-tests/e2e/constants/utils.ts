@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import { count } from "console";
 
 export interface TicketInfo {
     subject: string;
@@ -27,6 +28,22 @@ export interface User {
     baseUrl: string;
 }
 
+export interface ViewInfo {
+    name: string;
+    desc: string;
+    active?: boolean;
+    condition: {
+        field: "created",
+        verb: "anytime",
+        value?: unknown,
+    },
+    sortOrder: {
+        field: "Number",
+        direction: "Ascending" | "Descending"
+    }
+    availability: "MySelf" | "All agents"
+}
+
 export const generateTicketInfo = ({
     user,
     category,
@@ -49,3 +66,19 @@ export function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
+
+
+export const generateViewInfo = (): ViewInfo => ({
+    name: faker.word.words({ count: 1 }),
+    desc: faker.word.words({ count: 10 }),
+    active: true,
+    condition: {
+        field: "created",
+        verb: "anytime",
+    },
+    sortOrder: {
+        field: "Number",
+        direction: "Ascending",
+    },
+    availability: "MySelf",
+});
