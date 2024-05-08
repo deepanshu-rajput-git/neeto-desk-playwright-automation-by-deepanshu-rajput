@@ -275,10 +275,9 @@ test.describe("Ticket actions", () => {
             await newPage.close();
         });
 
-        await test.step("Step 5: Verify tickets in all tickets", async () =>
-            await sidebarSection.clickOnSubLink(TICKET_BUTTON_SELECTORS.allTicketsLabel));
-
-        await test.step("Step 6: Deleting the newly created ticket", () =>
-            ticketPage.deleteTicket({ neetoPlaywrightUtilities, ticketInfo: ticketsInfo[0], sidebarSection }));
+        await test.step("Step 5: Deleting the newly created ticket", async () => {
+            await sidebarSection.clickOnSubLink(TICKET_BUTTON_SELECTORS.allTicketsLabel);
+            await ticketPage.deleteTicket({ neetoPlaywrightUtilities, ticketInfo: ticketsInfo[0], sidebarSection });
+        })
     });
 })
