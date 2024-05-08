@@ -34,7 +34,7 @@ export interface ViewInfo {
     active?: boolean;
     condition: {
         field: "created",
-        verb: "anytime",
+        verb: "Any time",
         value?: unknown,
     },
     sortOrder: {
@@ -74,7 +74,7 @@ export const generateViewInfo = (): ViewInfo => ({
     active: true,
     condition: {
         field: "created",
-        verb: "anytime",
+        verb: "Any time",
     },
     sortOrder: {
         field: "Number",
