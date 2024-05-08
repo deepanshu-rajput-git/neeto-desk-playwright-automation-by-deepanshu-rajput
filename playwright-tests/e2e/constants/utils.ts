@@ -14,6 +14,18 @@ export interface Options {
     retryTimeout?: number;
 }
 
+export interface User {
+    firstName: string;
+    lastName: string;
+    otp: number;
+    domain: string;
+    currentUserName: string;
+    businessName: string;
+    subdomainName: string;
+    email: string;
+    isLoggedIn: boolean;
+    baseUrl: string;
+}
 
 export const generateTicketInfo = ({
     user,

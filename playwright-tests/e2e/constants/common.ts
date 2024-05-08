@@ -3,6 +3,7 @@ export const UNRESOLVED_TICKETS = "Unresolved tickets";
 export const TABLE_BODY_SELECTOR = '.ant-table-body';
 export const ALERT_BOX = 'alert-box';
 export const THREE_DOTS_SPINNER = '.ant-spin-dot-spin';
+export const BUTTON_SPINNER = '.neeto-ui-btn__spinner';
 
 
 export const COMMON_BUTTON_SELECTORS = {
@@ -10,7 +11,9 @@ export const COMMON_BUTTON_SELECTORS = {
     alertSubmitButton: 'alert-submit-button',
     takeActionDropdown: 'take-action-dropdown-icon',
     takeActionDropdownContainer: 'take-action-dropdown-container',
-
+    modalHeader: 'modal-header',
+    paneBody: 'pane-body',
+    paneCloseButton: 'pane-close-button',
 
 }
 
@@ -33,4 +36,5 @@ export const COMMON_CLASS_SELECTORS = {
     truncate: '.truncate',
     inline: '.inline',
     dialogBox: '[role="dialog"]',
+
 }

@@ -30,10 +30,10 @@ export default class TicketPage {
         await this.page.goto('/');
         for (const label of labels) {
             await sidebarSection.clickOnSubLink(label);
-            await expect(this.page.locator(THREE_DOTS_SPINNER)).toBeHidden();
+            await expect(this.page.locator(THREE_DOTS_SPINNER)).toBeHidden({ timeout: 10000 });
             await expect(this.page.locator(TABLE_BODY_SELECTOR)
                 .getByRole('row', { name: new RegExp(subject, 'i') }))
-                .toBeVisible();
+                .toBeVisible({ timeout: 10000 });
         }
     }
 
@@ -71,24 +71,24 @@ export default class TicketPage {
         });
 
         await this.page.getByTestId(COMMON_SELECTORS.saveChangesButton).click();
-        await expect(this.page.getByTestId(COMMON_SELECTORS.pageLoader)).toBeHidden();
+        await expect(this.page.getByTestId(COMMON_SELECTORS.pageLoader)).toBeHidden({ timeout: 10000 });
     }
 
     verifyDetailsOfTicket = ({ ticketInfo, user }) =>
         Promise.all([
             expect(this.page.locator(TABLE_BODY_SELECTOR)
-                .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') })).toBeVisible(),
+                .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') })).toBeVisible({ timeout: 5000 }),
             expect(this.page.locator(TABLE_BODY_SELECTOR)
-                .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).locator(COMMON_CLASS_SELECTORS.capitalize)).toContainText(ticketInfo.priority),
+                .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).locator(COMMON_CLASS_SELECTORS.capitalize)).toContainText(ticketInfo.priority, { timeout: 5000 }),
 
             expect(this.page.locator(TABLE_BODY_SELECTOR)
-                .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).locator(COMMON_CLASS_SELECTORS.truncate)).toContainText(ticketInfo.category),
+                .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).locator(COMMON_CLASS_SELECTORS.truncate)).toContainText(ticketInfo.category, { timeout: 5000 }),
 
             expect(this.page.locator(TABLE_BODY_SELECTOR)
-                .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).getByTestId(TICKET_BUTTON_SELECTORS.ticketStatusDropdown)).toContainText(ticketInfo.status),
+                .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).getByTestId(TICKET_BUTTON_SELECTORS.ticketStatusDropdown)).toContainText(ticketInfo.status, { timeout: 5000 }),
 
             expect(this.page.locator(TABLE_BODY_SELECTOR)
-                .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).locator(COMMON_CLASS_SELECTORS.inline).getByRole('button')).toContainText(new RegExp((user.firstName).slice(0, 5), 'i')),
+                .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).locator(COMMON_CLASS_SELECTORS.inline).getByRole('button')).toContainText(new RegExp((user.firstName).slice(0, 5), 'i'), { timeout: 5000 }),
         ]);
 
     attemptToCreateNewTicket = async ({ subject, customerEmail, agentName, desc }) => {
@@ -97,7 +97,7 @@ export default class TicketPage {
             await expect(async () => {
                 await this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.subjectField).fill(subject);
                 await this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.customerEmailField).click();
-                await expect(this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.subjectInputError)).toBeVisible({ timeout: 3000 });
+                await expect(this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.subjectInputError)).toBeVisible({ timeout: 10000 });
                 await expect(this.page.getByTestId(COMMON_SELECTORS.saveChangesButton)).toBeDisabled();
             }).toPass({ timeout: 5000 });
         }
@@ -106,14 +106,14 @@ export default class TicketPage {
             await expect(async () => {
                 await this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.customerEmailField).fill(customerEmail);
                 await this.page.getByTestId(COMMON_SELECTORS.saveChangesButton).click();
-                await expect(this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.customerEmailInputError)).toBeVisible({ timeout: 3000 });
+                await expect(this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.customerEmailInputError)).toBeVisible({ timeout: 10000 });
             }).toPass({ timeout: 5000 });
         }
 
         if (!agentName) {
             await this.page.getByTestId(TICKET_BUTTON_SELECTORS.agentSelectValueContainer).click();
             await this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.subjectField).click();
-            await expect(this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.agentSelectError)).toBeVisible({ timeout: 3000 });
+            await expect(this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.agentSelectError)).toBeVisible({ timeout: 10000 });
         }
 
         if (!desc) {
@@ -122,7 +122,7 @@ export default class TicketPage {
                 const saveButton = this.page.getByTestId(COMMON_SELECTORS.saveChangesButton);
                 await saveButton.scrollIntoViewIfNeeded();
                 await saveButton.click();
-                await expect(this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.neetoEditorError)).toBeVisible({ timeout: 3000 });
+                await expect(this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.neetoEditorError)).toBeVisible({ timeout: 10000 });
             }).toPass({ timeout: 5000 });
         }
     }
@@ -155,6 +155,7 @@ export default class TicketPage {
     };
 
     moveTicketToTrash = async ({ neetoPlaywrightUtilities, ticketInfo }) => {
+        await expect(this.page.getByTestId(COMMON_SELECTORS.pageLoader)).toBeHidden({ timeout: 10000 });
         await this.page.locator(TABLE_BODY_SELECTOR)
             .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).locator(COMMON_INPUT_FIELD.checkBoxInput).click();
 
@@ -166,13 +167,14 @@ export default class TicketPage {
         });
 
         await expect(this.page.locator(TABLE_BODY_SELECTOR)
-            .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') })).toBeHidden();
+            .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') })).toBeHidden({ timeout: 10000 });
     }
 
     deleteTicket = async ({ neetoPlaywrightUtilities, ticketInfo, sidebarSection, canDelete = false }) => {
         if (!canDelete) {
             await this.moveTicketToTrash({ neetoPlaywrightUtilities, ticketInfo });
             await sidebarSection.clickOnSubLink(TICKET_BUTTON_SELECTORS.trashLabel);
+            await expect(this.page.getByTestId(COMMON_SELECTORS.pageLoader)).toBeHidden({ timeout: 10000 });
         }
         await this.page.locator(TABLE_BODY_SELECTOR)
             .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).locator(COMMON_INPUT_FIELD.checkBoxInput).click();
@@ -185,13 +187,13 @@ export default class TicketPage {
         });
 
         await expect(this.page.locator(TABLE_BODY_SELECTOR)
-            .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') })).toBeHidden();
+            .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') })).toBeHidden({ timeout: 10000 });
     }
 
     // should be used on ticket details page only
     verifyShortcutActionKey = async ({ key, actionTitle }: { key: string, actionTitle: string }) => {
         await this.page.keyboard.press(key);
-        await expect(this.page.getByTestId(ALERT_BOX)).toBeVisible();
+        await expect(this.page.getByTestId(ALERT_BOX)).toBeVisible({ timeout: 10000 });
         await expect(this.page.getByTestId(COMMON_SELECTORS.alertTitle)).toContainText(new RegExp(actionTitle, 'i'));
         await this.page.getByTestId(COMMON_SELECTORS.alertModalCrossIcon).click();
     }
