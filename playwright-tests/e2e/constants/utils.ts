@@ -35,11 +35,11 @@ export interface ViewInfo {
     condition: {
         field: "created",
         verb: "Any time",
-        value?: unknown,
+        value?: string,
     },
     sortOrder: {
-        field: "Number",
-        direction: "Ascending" | "Descending"
+        field: "Number" | "",
+        direction: "Ascending" | "Descending" | "",
     }
     availability: "MySelf" | "All agents"
 }
