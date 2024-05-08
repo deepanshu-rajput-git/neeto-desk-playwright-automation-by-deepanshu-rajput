@@ -94,9 +94,8 @@ test.describe("Ticket actions", () => {
                 neetoPlaywrightUtilities,
             });
 
-            const blockCustomerModal = page.locator(`'${COMMON_CLASS_SELECTORS.dialogBox}'`);
+            const blockCustomerModal = page.locator(COMMON_CLASS_SELECTORS.dialogBox);
             if (await blockCustomerModal.isVisible()) {
-                await page.getByTestId(COMMON_SELECTORS.alertModalCrossIcon).click();
                 await expect(page.getByTestId(COMMON_BUTTON_SELECTORS.modalHeader)).toContainText(new RegExp(TICKET_ACTION_TEXTS.blockCustomer, 'i'));
                 await page.getByTestId(TICKET_BUTTON_SELECTORS.customerBlockModalSubmit).click();
                 await expect(page.locator(BUTTON_SPINNER)).toBeHidden();
