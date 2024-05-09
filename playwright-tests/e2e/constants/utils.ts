@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { count } from "console";
+import { TAXONOMY_TEXTS } from "./texts/taxonomy";
 
 export interface TicketInfo {
     subject: string;
@@ -57,7 +57,7 @@ export interface CannedResponseInfo {
     name: string,
     desc: string,
     active?: boolean;
-    availability?: "self" | "All agents" | "Agents in group",
+    availability?: "myself" | "all_agents" | "agent_groups",
     note: string,
 }
 
@@ -104,6 +104,19 @@ export const generateCannedResponse = (): CannedResponseInfo => ({
     name: faker.word.words({ count: 1 }),
     desc: faker.word.words({ count: 10 }),
     active: true,
-    availability: "self",
+    availability: "all_agents",
     note: faker.word.words({ count: 10 }),
 })
+
+export const TAXONOMIES = [
+    {
+        defaultValue: TAXONOMY_TEXTS.agent,
+        singularLabel: TAXONOMY_TEXTS.member,
+        pluralLabel: TAXONOMY_TEXTS.members
+    },
+    {
+        defaultValue: TAXONOMY_TEXTS.group,
+        singularLabel: TAXONOMY_TEXTS.team,
+        pluralLabel: TAXONOMY_TEXTS.teams
+    }
+];

@@ -57,8 +57,8 @@ export const poms: PomFixture = {
     await use(helpAndProfilePage);
   },
 
-  ticketPage: async ({ page }, use) => {
-    const ticketPage = new TicketPage(page);
+  ticketPage: async ({ page, neetoPlaywrightUtilities }, use) => {
+    const ticketPage = new TicketPage(page, neetoPlaywrightUtilities);
     await use(ticketPage);
   },
 
@@ -72,18 +72,18 @@ export const poms: PomFixture = {
     use(sidebarSection);
   },
 
-  viewPage: async ({ page }, use) => {
-    const viewPage = new ViewPage(page);
+  viewPage: async ({ page, neetoPlaywrightUtilities }, use) => {
+    const viewPage = new ViewPage(page, neetoPlaywrightUtilities);
     await use(viewPage);
   },
 
-  taxonomyPage: async ({ page }, use) => {
-    const taxonomyPage = new TaxonomyPage(page);
+  taxonomyPage: async ({ page, neetoPlaywrightUtilities }, use) => {
+    const taxonomyPage = new TaxonomyPage(page, neetoPlaywrightUtilities);
     await use(taxonomyPage);
   },
 
-  cannedResponse: async ({ page }, use) => {
-    const cannedResponse = new CannedResponse(page);
+  cannedResponse: async ({ page, neetoPlaywrightUtilities }, use) => {
+    const cannedResponse = new CannedResponse(page, neetoPlaywrightUtilities);
     await use(cannedResponse);
   }
 };
