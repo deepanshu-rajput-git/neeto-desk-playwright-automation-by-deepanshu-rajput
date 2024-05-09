@@ -1,11 +1,24 @@
-import { COMMON_SELECTORS } from "@bigbinary/neeto-playwright-commons";
+import { COMMON_SELECTORS, MEMBER_SELECTORS } from "@bigbinary/neeto-playwright-commons";
 import test from "../fixtures/index";
-import { ViewInfo, generateViewInfo } from "@constants/utils";
-import { COMMON_BUTTON_SELECTORS, COMMON_CLASS_SELECTORS, COMMON_INPUT_FIELD, TABLE_BODY_SELECTOR } from "@constants/common";
-import { TICKET_BUTTON_SELECTORS } from "@selectors/ticket";
+import { COMMON_BUTTON_SELECTORS } from "@constants/common";
 import { expect } from "@playwright/test";
 import { VIEW_TEXTS } from "@constants/texts/view";
 import { VIEW_SELECTORS } from "@selectors/addNewView";
+import { TAXONOMY_TEXTS } from "@constants/texts/taxonomy";
+import { TAXONOMY_BUTTON_SELECTORS } from "@selectors/taxonomy";
+
+const taxonomies = [
+    {
+        defaultValue: TAXONOMY_TEXTS.agent,
+        singularLabel: TAXONOMY_TEXTS.member,
+        pluralLabel: TAXONOMY_TEXTS.members
+    },
+    {
+        defaultValue: TAXONOMY_TEXTS.group,
+        singularLabel: TAXONOMY_TEXTS.team,
+        pluralLabel: TAXONOMY_TEXTS.teams
+    }
+];
 
 test.describe("Taxonomy page", () => {
     test("should edit a taxonomy", async ({ page, taxonomyPage, neetoPlaywrightUtilities }) => {
@@ -16,10 +29,13 @@ test.describe("Taxonomy page", () => {
         await test.step("Step 2: Navigate to settings", async () => {
             await page.getByTestId(VIEW_SELECTORS.settingsNavTab).click();
             await neetoPlaywrightUtilities.waitForPageLoad();
-            await expect(page.getByTestId(COMMON_BUTTON_SELECTORS.mainHeader)).toContainText(VIEW_TEXTS.settings);
+            await taxonomyPage.verifyText({
+                container: COMMON_BUTTON_SELECTORS.mainHeader,
+                text: VIEW_TEXTS.settings
+            })
         });
 
-        await test.step("Step 3: Navigate to views option", async () => {
+        await test.step("Step 3: Navigate to Taxonomy settings option", async () => {
             const viewsButton = page.getByTestId(VIEW_SELECTORS.taxonomySettingsOption);
             await viewsButton.scrollIntoViewIfNeeded();
             await viewsButton.click();
@@ -27,44 +43,80 @@ test.describe("Taxonomy page", () => {
         })
 
         await test.step("Step 4: Editing taxonomy Agent and Group", async () => {
-            await expect(page.getByTestId(COMMON_SELECTORS.header)).toContainText(new RegExp('Taxonomy', 'i'));
-
-            await taxonomyPage.editTaxonomy({ defaultValue: "Agent", singularLabel: "Member", pluralLabel: "Members", neetoPlaywrightUtilities });
-            await taxonomyPage.editTaxonomy({ defaultValue: "Group", singularLabel: "Team", pluralLabel: "Teams", neetoPlaywrightUtilities });
-
-            await expect(page.getByTestId('agent-nav-tab')).toContainText(new RegExp('Members', 'i'));
-
-            await page.getByTestId('agent-nav-tab').click();
-            await neetoPlaywrightUtilities.waitForPageLoad();
-
-            await expect(page.getByTestId('main-header')).toContainText(new RegExp('Members', 'i'));
-            await expect(page.getByTestId('ntm-add-member-button')).toContainText(new RegExp('Member', 'i'));
-
-            await page.getByTestId('settings-nav-tab').click();
-            await neetoPlaywrightUtilities.waitForPageLoad();
-
-            const groupButton = page.getByTestId('groups-settings-option');
-            await expect(groupButton.getByTestId('settings-item-heading')).toContainText(new RegExp('Teams', 'i'));
-            await expect(groupButton.getByTestId('settings-item-description')).toContainText(new RegExp('Teams', 'i'));
-            await groupButton.click();
-            await neetoPlaywrightUtilities.waitForPageLoad();
-
-            await expect(page.getByTestId('main-header')).toContainText(new RegExp('Teams', 'i'));
-            await expect(page.getByTestId('neeto-molecules-header').getByTestId('add-new-group-button')).toContainText(new RegExp('Team', 'i'));
-
-            await page.getByTestId('taxonomy-sub-link').click();
-            await neetoPlaywrightUtilities.waitForPageLoad();
-
-            await test.step("Step 5: Restoring to default", async () => {
-                await taxonomyPage.restoreToDefault({ defaultValue: "Agent", neetoPlaywrightUtilities });
-                await taxonomyPage.restoreToDefault({ defaultValue: "Group", neetoPlaywrightUtilities });
+            await taxonomyPage.verifyText({
+                container: COMMON_SELECTORS.heading,
+                text: TAXONOMY_TEXTS.taxonomy
             });
 
-            await test.step("Assertion of restoring to default", async () => {
-                await expect(page.getByTestId('agent-nav-tab')).toContainText(new RegExp('Agents', 'i'));
-                await page.getByTestId('settings-nav-tab').click();
-                await expect(page.getByTestId('groups-sub-link')).toContainText(new RegExp('Groups', 'i'));
-            })
+            for (const { defaultValue, singularLabel, pluralLabel } of taxonomies) {
+                await taxonomyPage.editTaxonomy({
+                    defaultValue,
+                    singularLabel,
+                    pluralLabel,
+                    neetoPlaywrightUtilities
+                });
+            }
         });
+
+        await test.step("Step 5: Asserting taxonomy - Agent", async () => {
+            await taxonomyPage.verifyText({
+                container: COMMON_BUTTON_SELECTORS.navTabLink('agent'),
+                text: TAXONOMY_TEXTS.members
+            });
+            await page.getByTestId(COMMON_BUTTON_SELECTORS.navTabLink('agent')).click();
+            await neetoPlaywrightUtilities.waitForPageLoad();
+
+            await taxonomyPage.verifyText({
+                container: COMMON_SELECTORS.heading,
+                text: TAXONOMY_TEXTS.members
+            });
+            await taxonomyPage.verifyText({
+                container: MEMBER_SELECTORS.newButton,
+                text: TAXONOMY_TEXTS.member
+            });
+        });
+
+        await test.step("Step 4: Asserting taxonomy - Group", async () => {
+            await page.getByTestId(COMMON_BUTTON_SELECTORS.navTabLink('settings')).click();
+            await neetoPlaywrightUtilities.waitForPageLoad();
+            const groupButton = page.getByTestId(TAXONOMY_BUTTON_SELECTORS.groupsSettingOption);
+
+            await Promise.all([
+                expect(groupButton.getByTestId(TAXONOMY_BUTTON_SELECTORS.settingsItemHeading))
+                    .toContainText(new RegExp(TAXONOMY_TEXTS.teams, 'i')),
+                expect(groupButton.getByTestId(TAXONOMY_BUTTON_SELECTORS.settingsItemDesc))
+                    .toContainText(new RegExp(TAXONOMY_TEXTS.teams, 'i'))
+            ])
+
+            await groupButton.click();
+            await neetoPlaywrightUtilities.waitForPageLoad();
+            await taxonomyPage.verifyText({
+                container: COMMON_SELECTORS.heading,
+                text: TAXONOMY_TEXTS.teams
+            });
+            await expect(page.getByTestId(COMMON_SELECTORS.header)
+                .getByTestId(TAXONOMY_BUTTON_SELECTORS.addNewGroupButton))
+                .toContainText(new RegExp(TAXONOMY_TEXTS.team, 'i'));
+        });
+
+        await test.step("Step 6: Resetting to default", async () => {
+            await page.getByTestId(COMMON_SELECTORS.sidebarSubLink('taxonomy')).click();
+            await neetoPlaywrightUtilities.waitForPageLoad();
+            for (const { defaultValue } of taxonomies) {
+                await taxonomyPage.restoreToDefault({ defaultValue, neetoPlaywrightUtilities });
+            }
+        });
+
+        await test.step("Step 7: Assertion of restoring to default", async () => {
+            await taxonomyPage.verifyText({
+                container: COMMON_BUTTON_SELECTORS.navTabLink('agent'),
+                text: TAXONOMY_TEXTS.agents
+            });
+            await page.getByTestId(TAXONOMY_BUTTON_SELECTORS.settingsNavTab).click();
+            await taxonomyPage.verifyText({
+                container: COMMON_SELECTORS.sidebarSubLink('groups'),
+                text: TAXONOMY_TEXTS.groups
+            });
+        })
     });
 });

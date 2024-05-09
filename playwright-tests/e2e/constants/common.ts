@@ -17,6 +17,7 @@ export const COMMON_BUTTON_SELECTORS = {
     mainHeader: 'main-header',
     formSubmitButton: 'form-submit-button',
     cancelButton: 'cancel-button',
+    navTabLink: (tab) => `${tab}-nav-tab`,
 }
 
 export const COMMON_INPUT_FIELD = {
