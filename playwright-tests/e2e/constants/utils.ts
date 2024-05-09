@@ -53,6 +53,14 @@ export interface ViewInfo {
     availability: "MySelf" | "All agents"
 }
 
+export interface CannedResponseInfo {
+    name: string,
+    desc: string,
+    active?: boolean;
+    availability?: "self" | "All agents" | "Agents in group",
+    note: string,
+}
+
 export const generateTicketInfo = ({
     user,
     category,
@@ -91,3 +99,11 @@ export const generateViewInfo = (): ViewInfo => ({
     },
     availability: "MySelf",
 });
+
+export const generateCannedResponse = (): CannedResponseInfo => ({
+    name: faker.word.words({ count: 1 }),
+    desc: faker.word.words({ count: 10 }),
+    active: true,
+    availability: "self",
+    note: faker.word.words({ count: 10 }),
+})

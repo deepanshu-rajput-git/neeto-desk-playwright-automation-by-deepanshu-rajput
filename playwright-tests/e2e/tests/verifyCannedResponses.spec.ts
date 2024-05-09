@@ -5,17 +5,18 @@ import { COMMON_BUTTON_SELECTORS, TABLE_BODY_SELECTOR } from "@constants/common"
 import { expect } from "@playwright/test";
 import { VIEW_TEXTS } from "@constants/texts/view";
 import { VIEW_SELECTORS } from "@selectors/addNewView";
-import { TicketInfo, generateTicketInfo } from "@constants/utils";
+import { CannedResponseInfo, TicketInfo, generateCannedResponse, generateTicketInfo } from "@constants/utils";
 
 
 test.describe("Canned Responses", () => {
-    let user = {}, ticketInfo: TicketInfo;
+    let user = {}, ticketInfo: TicketInfo, cannedResponseInfo: CannedResponseInfo;
     test.beforeAll(() => {
         user = readFileSyncIfExists().user;
         ticketInfo = generateTicketInfo({ user });
+        cannedResponseInfo = generateCannedResponse();
     });
 
-    test("should be available to reply ", async ({ page, cannedResponse, ticketPage, neetoPlaywrightUtilities }) => {
+    test("should be available to reply ", async ({ page, cannedResponse, sidebarSection, ticketPage, neetoPlaywrightUtilities }) => {
         test.slow();
         await test.step("Step 1: Navigate to home page", () =>
             page.goto("/"));
@@ -30,7 +31,7 @@ test.describe("Canned Responses", () => {
         });
 
         await test.step("Step 3: Navigate to Canned Response settings option", async () => {
-            const viewsButton = page.getByTestId(VIEW_SELECTORS.taxonomySettingsOption);
+            const viewsButton = page.getByTestId('canned-responses-settings-option');
             await viewsButton.scrollIntoViewIfNeeded();
             await viewsButton.click();
             await neetoPlaywrightUtilities.waitForPageLoad();
@@ -42,7 +43,7 @@ test.describe("Canned Responses", () => {
                 text: "Canned responses"
             });
 
-            await cannedResponse.createCannedResponse({ neetoPlaywrightUtilities });
+            await cannedResponse.createCannedResponse({ neetoPlaywrightUtilities, cannedResponseInfo });
 
             await page.getByTestId(COMMON_BUTTON_SELECTORS.navTabLink('settings')).click();
             await neetoPlaywrightUtilities.waitForPageLoad();
@@ -66,15 +67,32 @@ test.describe("Canned Responses", () => {
         await neetoPlaywrightUtilities.selectOptionFromDropdown({
             selectValueContainer: 'select-a-canned-response-select-value-container',
             selectMenu: 'select-a-canned-response-select-menu',
-            value: 'Glad it is solved'
+            value: cannedResponseInfo.name,
         });
 
         await page.getByTestId('apply-button').click();
         await expect(page.getByTestId(COMMON_SELECTORS.paneBody)).toBeHidden({ timeout: 5000 });
         await neetoPlaywrightUtilities.waitForPageLoad();
+        await neetoPlaywrightUtilities.verifyToast({
+            toastType: "success",
+            closeAfterVerification: true,
+            message: "Canned response has been applied successfully"
+        });
+        await expect(page.getByTestId('neeto-editor-content')).toContainText(new RegExp(cannedResponseInfo.note, 'i'));
+        const addNoteButton = page.getByTestId('add-note-button');
+        await addNoteButton.scrollIntoViewIfNeeded();
+        await addNoteButton.click();
 
-        await expect(page.getByTestId('neeto-editor-content').getByRole('paragraph', { name: new RegExp("Desc", 'i') })).toBeVisible();
-        await page.getByTestId('send-reply-button').click();
+        await expect(page.getByTestId('ticket-detail-view-description-field').filter({ hasText: new RegExp(cannedResponseInfo.note, 'i') })).toBeVisible({ timeout: 10000 });
+
+        await page.getByTestId('unresolved-sub-link').click();
         await neetoPlaywrightUtilities.waitForPageLoad();
-    })
+
+        await test.step("Teardown the newly created ticket", () =>
+            ticketPage.deleteTicket({ neetoPlaywrightUtilities, sidebarSection, ticketInfo }));
+
+        await test.step("Teardown the new canned response", () =>
+            cannedResponse.deleteCannedResponse({ neetoPlaywrightUtilities, cannedResponseInfo }));
+    });
+
 });

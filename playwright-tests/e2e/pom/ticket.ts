@@ -141,14 +141,14 @@ export default class TicketPage {
             ...options,
         };
 
-            await this.page.getByTestId(selectValueContainer).click();
-            await expect(this.page.getByTestId(selectMenu)).toBeVisible({
-                timeout: mergedOptions.visibilityTimeout,
-            });
-            await this.page.getByTestId(selectMenu).getByText(value).click();
-            const alertModal = this.page.getByTestId(ALERT_BOX);
-            await expect(alertModal).toBeVisible({ timeout: mergedOptions.textAssertionTimeout });
-            await alertModal.getByTestId(COMMON_BUTTON_SELECTORS.alertSubmitButton).click();
+        await this.page.getByTestId(selectValueContainer).click();
+        await expect(this.page.getByTestId(selectMenu)).toBeVisible({
+            timeout: mergedOptions.visibilityTimeout,
+        });
+        await this.page.getByTestId(selectMenu).getByText(value).click();
+        const alertModal = this.page.getByTestId(ALERT_BOX);
+        await expect(alertModal).toBeVisible({ timeout: mergedOptions.textAssertionTimeout });
+        await alertModal.getByTestId(COMMON_BUTTON_SELECTORS.alertSubmitButton).click();
         await neetoPlaywrightUtilities.waitForPageLoad();
     };
 
