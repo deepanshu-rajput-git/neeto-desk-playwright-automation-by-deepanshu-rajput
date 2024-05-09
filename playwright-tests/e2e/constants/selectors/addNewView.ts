@@ -23,5 +23,6 @@ export const VIEW_SELECTORS = {
     nameInputEror: 'name-input-error',
     fieldSelectError: 'field-select-error',
     directionSelectError: 'direction-select-error',
+    taxonomySettingsOption: 'taxonomy-settings-option',
 
 }

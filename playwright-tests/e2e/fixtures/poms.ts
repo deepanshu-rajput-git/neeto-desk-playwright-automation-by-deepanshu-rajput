@@ -14,6 +14,7 @@ import {
   PlaywrightWorkerOptions,
 } from "@playwright/test";
 import { I18nPlaywrightFixture } from "playwright-i18next-fixture";
+import TaxonomyPage from "pom/taxonomy";
 import TicketPage from "pom/ticket";
 import ViewPage from "pom/view";
 
@@ -24,6 +25,7 @@ export interface Poms {
   editorPage: EditorPage,
   sidebarSection: SidebarSection,
   viewPage: ViewPage,
+  taxonomyPage: TaxonomyPage,
 }
 
 export type PomFixture = Fixtures<
@@ -73,4 +75,8 @@ export const poms: PomFixture = {
     await use(viewPage);
   },
 
+  taxonomyPage: async ({ page }, use) => {
+    const taxonomyPage = new TaxonomyPage(page);
+    await use(taxonomyPage);
+  },
 };
