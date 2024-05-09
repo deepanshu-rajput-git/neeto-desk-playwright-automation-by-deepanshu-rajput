@@ -15,6 +15,7 @@ import {
 } from "@playwright/test";
 import { I18nPlaywrightFixture } from "playwright-i18next-fixture";
 import TicketPage from "pom/ticket";
+import ViewPage from "pom/view";
 
 export interface Poms {
   organizationPage: OrganizationPage;
@@ -22,6 +23,7 @@ export interface Poms {
   ticketPage: TicketPage,
   editorPage: EditorPage,
   sidebarSection: SidebarSection,
+  viewPage: ViewPage,
 }
 
 export type PomFixture = Fixtures<
@@ -50,6 +52,7 @@ export const poms: PomFixture = {
     });
     await use(helpAndProfilePage);
   },
+
   ticketPage: async ({ page }, use) => {
     const ticketPage = new TicketPage(page);
     await use(ticketPage);
@@ -63,6 +66,11 @@ export const poms: PomFixture = {
   sidebarSection: async ({ page, neetoPlaywrightUtilities }, use) => {
     const sidebarSection = new SidebarSection(page, neetoPlaywrightUtilities);
     use(sidebarSection);
+  },
+
+  viewPage: async ({ page }, use) => {
+    const viewPage = new ViewPage(page);
+    await use(viewPage);
   },
 
 };

@@ -14,7 +14,9 @@ export const COMMON_BUTTON_SELECTORS = {
     modalHeader: 'modal-header',
     paneBody: 'pane-body',
     paneCloseButton: 'pane-close-button',
-
+    mainHeader: 'main-header',
+    formSubmitButton: 'form-submit-button',
+    cancelButton: 'cancel-button',
 }
 
 export const COMMON_INPUT_FIELD = {
@@ -36,5 +38,6 @@ export const COMMON_CLASS_SELECTORS = {
     truncate: '.truncate',
     inline: '.inline',
     dialogBox: '[role="dialog"]',
+    tableContainer: '.ant-table-container',
 
 }
