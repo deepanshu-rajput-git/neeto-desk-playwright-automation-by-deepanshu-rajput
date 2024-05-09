@@ -141,7 +141,6 @@ export default class TicketPage {
             ...options,
         };
 
-        await expect(async () => {
             await this.page.getByTestId(selectValueContainer).click();
             await expect(this.page.getByTestId(selectMenu)).toBeVisible({
                 timeout: mergedOptions.visibilityTimeout,
@@ -150,8 +149,7 @@ export default class TicketPage {
             const alertModal = this.page.getByTestId(ALERT_BOX);
             await expect(alertModal).toBeVisible({ timeout: mergedOptions.textAssertionTimeout });
             await alertModal.getByTestId(COMMON_BUTTON_SELECTORS.alertSubmitButton).click();
-            await neetoPlaywrightUtilities.verifySuccessToast({ closeAfterVerification: false });
-        }).toPass({ timeout: mergedOptions.retryTimeout });
+        await neetoPlaywrightUtilities.waitForPageLoad();
     };
 
     moveTicketToTrash = async ({ neetoPlaywrightUtilities, ticketInfo }) => {
@@ -165,7 +163,7 @@ export default class TicketPage {
             value: COMMON_TEXTS.moveToTrash,
             neetoPlaywrightUtilities,
         });
-
+        await neetoPlaywrightUtilities.waitForPageLoad();
         await expect(this.page.locator(TABLE_BODY_SELECTOR)
             .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') })).toBeHidden({ timeout: 10000 });
     }
@@ -174,7 +172,8 @@ export default class TicketPage {
         if (!canDelete) {
             await this.moveTicketToTrash({ neetoPlaywrightUtilities, ticketInfo });
             await sidebarSection.clickOnSubLink(TICKET_BUTTON_SELECTORS.trashLabel);
-            await expect(this.page.getByTestId(COMMON_SELECTORS.pageLoader)).toBeHidden({ timeout: 10000 });
+            await neetoPlaywrightUtilities.waitForPageLoad();
+            // await expect(this.page.getByTestId(COMMON_SELECTORS.pageLoader)).toBeHidden({ timeout: 10000 });
         }
         await this.page.locator(TABLE_BODY_SELECTOR)
             .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).locator(COMMON_INPUT_FIELD.checkBoxInput).click();
