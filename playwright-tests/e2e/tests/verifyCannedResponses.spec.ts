@@ -1,4 +1,4 @@
-import { COMMON_SELECTORS } from "@bigbinary/neeto-playwright-commons";
+import { COMMON_SELECTORS, NEETO_EDITOR_SELECTORS } from "@bigbinary/neeto-playwright-commons";
 import { readFileSyncIfExists } from "@bigbinary/neeto-playwright-commons";
 import test from "../fixtures/index";
 import { COMMON_BUTTON_SELECTORS, TABLE_BODY_SELECTOR } from "@constants/common";
@@ -6,6 +6,8 @@ import { expect } from "@playwright/test";
 import { VIEW_TEXTS } from "@constants/texts/view";
 import { VIEW_SELECTORS } from "@selectors/addNewView";
 import { CannedResponseInfo, TicketInfo, generateCannedResponse, generateTicketInfo } from "@constants/utils";
+import { CANNED_RESPONSE_SELECTORS } from "@selectors/cannedResponse";
+import { CANNED_RESPONSE_TEXTS } from "@constants/texts/cannedResponse";
 
 
 test.describe("Canned Responses", () => {
@@ -31,7 +33,7 @@ test.describe("Canned Responses", () => {
         });
 
         await test.step("Step 3: Navigate to Canned Response settings option", async () => {
-            const viewsButton = page.getByTestId('canned-responses-settings-option');
+            const viewsButton = page.getByTestId(CANNED_RESPONSE_SELECTORS.cannedResponsesSettings);
             await viewsButton.scrollIntoViewIfNeeded();
             await viewsButton.click();
             await neetoPlaywrightUtilities.waitForPageLoad();
@@ -40,7 +42,7 @@ test.describe("Canned Responses", () => {
         await test.step("Step 4: Creating a new canned response", async () => {
             await cannedResponse.verifyText({
                 container: COMMON_SELECTORS.heading,
-                text: "Canned responses"
+                text: CANNED_RESPONSE_TEXTS.cannedResponses
             });
 
             await cannedResponse.createCannedResponse({ cannedResponseInfo });
@@ -56,41 +58,41 @@ test.describe("Canned Responses", () => {
 
             await page.locator(TABLE_BODY_SELECTOR)
                 .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') })
-                .getByTestId('tickets-subject-button').click();
+                .getByTestId(CANNED_RESPONSE_SELECTORS.ticketsSubjectButton).click();
         });
         await test.step("Step 6: Reply to the ticket using canned response", async () => {
-            await page.getByTestId('ticket-details-subheader-reply-button').click();
-            await expect(page.getByTestId('reply-container')).toBeVisible();
-            await page.getByTestId('neeto-editor-fixed-menu-canned-responses-option').click();
+            await page.getByTestId(CANNED_RESPONSE_SELECTORS.ticketDetailsSubheaderReply).click();
+            await expect(page.getByTestId(CANNED_RESPONSE_SELECTORS.replyContainer)).toBeVisible();
+            await page.getByTestId(NEETO_EDITOR_SELECTORS.cannedResponseOption).click();
             await expect(page.getByTestId(COMMON_SELECTORS.paneBody)).toBeVisible({ timeout: 5000 });
 
             await neetoPlaywrightUtilities.selectOptionFromDropdown({
-                selectValueContainer: 'select-a-canned-response-select-value-container',
-                selectMenu: 'select-a-canned-response-select-menu',
+                selectValueContainer: CANNED_RESPONSE_SELECTORS.cannedResponseSelectValue,
+                selectMenu: CANNED_RESPONSE_SELECTORS.cannedResponseSelectMenu,
                 value: cannedResponseInfo.name,
             });
 
-            await page.getByTestId('apply-button').click();
+            await page.getByTestId(NEETO_EDITOR_SELECTORS.applyButton).click();
             await expect(page.getByTestId(COMMON_SELECTORS.paneBody)).toBeHidden({ timeout: 5000 });
             await neetoPlaywrightUtilities.waitForPageLoad();
             await neetoPlaywrightUtilities.verifyToast({
                 toastType: "success",
                 closeAfterVerification: true,
-                message: "Canned response has been applied successfully"
+                message: CANNED_RESPONSE_TEXTS.cannedResponseAppliedSuccessfully
             });
         });
         await test.step("Step 7: Adding canned response as note", async () => {
-            await expect(page.getByTestId('neeto-editor-content')).toContainText(new RegExp(cannedResponseInfo.note, 'i'));
-            const addNoteButton = page.getByTestId('add-note-button');
+            await expect(page.getByTestId(NEETO_EDITOR_SELECTORS.contentField)).toContainText(new RegExp(cannedResponseInfo.note, 'i'));
+            const addNoteButton = page.getByTestId(CANNED_RESPONSE_SELECTORS.addNoteButton);
             await addNoteButton.scrollIntoViewIfNeeded();
             await addNoteButton.click();
 
-            await expect(page.getByTestId('ticket-detail-view-description-field')
+            await expect(page.getByTestId(CANNED_RESPONSE_SELECTORS.ticketDetailViewDescField)
                 .filter({ hasText: new RegExp(cannedResponseInfo.note, 'i') }))
                 .toBeVisible({ timeout: 10000 });
         });
         await test.step("Step 8: Navigating to unresolved tickets view", async () => {
-            await page.getByTestId('unresolved-sub-link').click();
+            await page.getByTestId(COMMON_SELECTORS.sidebarSubLink('unresolved')).click();
             await neetoPlaywrightUtilities.waitForPageLoad();
         });
 
