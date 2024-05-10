@@ -31,6 +31,9 @@ export const COMMON_TEXTS = {
     reportSpam: 'Report spam',
     mergeTicket: 'Merge into another ticket',
     printTicket: 'Print ticket',
+    submit: "Submit",
+    delete: 'Delete',
+
 
 }
 

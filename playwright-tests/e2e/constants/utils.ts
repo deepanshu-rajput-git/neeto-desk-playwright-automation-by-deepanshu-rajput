@@ -61,6 +61,26 @@ export interface CannedResponseInfo {
     note: string,
 }
 
+export interface WebFormInfo {
+    name: string,
+    desc: string,
+    isPublic?: boolean;
+    questions: { label: string, placeholder: string }[],
+    note: string,
+}
+
+export interface SampleFormData {
+    name: string,
+    desc: string,
+    email: string,
+}
+
+export const generateSampleFormData = (): SampleFormData => ({
+    name: faker.word.words(3),
+    desc: faker.word.words(5),
+    email: faker.internet.email(),
+})
+
 export const generateTicketInfo = ({
     user,
     category,
@@ -79,6 +99,7 @@ export const generateTicketInfo = ({
     priority: priority || 'Medium',
     status: status || 'New',
 });
+
 export function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -105,6 +126,18 @@ export const generateCannedResponse = (): CannedResponseInfo => ({
     desc: faker.word.words({ count: 10 }),
     active: true,
     availability: "all_agents",
+    note: faker.word.words({ count: 10 }),
+})
+
+export const generateWebFormInfo = (): WebFormInfo => ({
+    name: faker.word.words({ count: 4 }),
+    desc: faker.word.words({ count: 10 }),
+    isPublic: true,
+    questions: Array.from({ length: 3 }, () => ({
+        label: faker.word.words({ count: 2 }),
+        placeholder: faker.word.words({ count: 4 }),
+        value: faker.word.words
+    })),
     note: faker.word.words({ count: 10 }),
 })
 
