@@ -18,6 +18,7 @@ import CannedResponse from "pom/cannedResponse";
 import TaxonomyPage from "pom/taxonomy";
 import TicketPage from "pom/ticket";
 import ViewPage from "pom/view";
+import WebForm from "pom/webForm";
 
 export interface Poms {
   organizationPage: OrganizationPage;
@@ -27,7 +28,8 @@ export interface Poms {
   sidebarSection: SidebarSection,
   viewPage: ViewPage,
   taxonomyPage: TaxonomyPage,
-  cannedResponse: CannedResponse
+  cannedResponse: CannedResponse,
+  webForm: WebForm,
 }
 
 export type PomFixture = Fixtures<
@@ -85,5 +87,10 @@ export const poms: PomFixture = {
   cannedResponse: async ({ page, neetoPlaywrightUtilities }, use) => {
     const cannedResponse = new CannedResponse(page, neetoPlaywrightUtilities);
     await use(cannedResponse);
-  }
+  },
+
+  webForm: async ({ page, neetoPlaywrightUtilities }, use) => {
+    const webForm = new WebForm(page, neetoPlaywrightUtilities);
+    await use(webForm);
+  },
 };
