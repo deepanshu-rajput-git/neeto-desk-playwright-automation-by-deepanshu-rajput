@@ -20,12 +20,12 @@ test.describe("Ticket actions", () => {
         }
     });
 
-    test("should spam the newly created ticket", async ({ page, ticketPage, neetoPlaywrightUtilities, sidebarSection }) => {
+    test("should spam the newly created ticket", async ({ page, ticketPage, sidebarSection }) => {
         await test.step("Step 1: Navigate to home page", () =>
             page.goto("/"));
 
         await test.step("Step 2: Create a new ticket", async () => {
-            await ticketPage.createNewTicket({ neetoPlaywrightUtilities, user, ticketInfo: ticketsInfo[0] });
+            await ticketPage.createNewTicket({ user, ticketInfo: ticketsInfo[0] });
             await expect(page.locator(THREE_DOTS_SPINNER)).toBeHidden();
             await expect(page.locator(TABLE_BODY_SELECTOR)
                 .getByRole('row', { name: new RegExp(ticketsInfo[0].subject, 'i') })).toBeVisible({ timeout: 10000 });
@@ -44,7 +44,6 @@ test.describe("Ticket actions", () => {
                 selectValueContainer: TICKET_ACTION_BUTTON_SELECTORS.subheaderActionsDropdown,
                 selectMenu: COMMON_SELECTORS.dropdownContainer,
                 value: COMMON_TEXTS.reportSpam,
-                neetoPlaywrightUtilities,
             });
 
             const blockCustomerModal = page.locator(COMMON_CLASS_SELECTORS.dialogBox);
@@ -61,7 +60,7 @@ test.describe("Ticket actions", () => {
             ticketPage.verifyDetailsOfTicket({ ticketInfo: { ...ticketsInfo[0], status: TICKET_STATUS.spam }, user }));
 
         await test.step("Step 5: Deleting the newly created ticket", () =>
-            ticketPage.deleteTicket({ neetoPlaywrightUtilities, ticketInfo: ticketsInfo[0], sidebarSection, canDelete: true }));
+            ticketPage.deleteTicket({ ticketInfo: ticketsInfo[0], sidebarSection, canDelete: true }));
     });
 
     test("should block the author of newly created 2 tickets", async ({ page, ticketPage, neetoPlaywrightUtilities, sidebarSection }) => {
@@ -71,7 +70,7 @@ test.describe("Ticket actions", () => {
 
         await test.step("Step 2: Create two new tickets with same email", async () => {
             for (const ticketInfo of ticketsInfo) {
-                await ticketPage.createNewTicket({ neetoPlaywrightUtilities, user, ticketInfo: { ...ticketInfo, customerEmail: newEmail } });
+                await ticketPage.createNewTicket({ user, ticketInfo: { ...ticketInfo, customerEmail: newEmail } });
                 await expect(page.locator(THREE_DOTS_SPINNER)).toBeHidden();
                 await expect(page.locator(TABLE_BODY_SELECTOR)
                     .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') })).toBeVisible({ timeout: 10000 });
@@ -91,7 +90,6 @@ test.describe("Ticket actions", () => {
                 selectValueContainer: TICKET_ACTION_BUTTON_SELECTORS.subheaderActionsDropdown,
                 selectMenu: COMMON_SELECTORS.dropdownContainer,
                 value: COMMON_TEXTS.reportSpam,
-                neetoPlaywrightUtilities,
             });
 
             const blockCustomerModal = page.locator(COMMON_CLASS_SELECTORS.dialogBox);
@@ -115,7 +113,7 @@ test.describe("Ticket actions", () => {
 
         await test.step("Step 6: Deleting the newly created ticket", async () => {
             for (const ticketInfo of ticketsInfo) {
-                await ticketPage.deleteTicket({ neetoPlaywrightUtilities, ticketInfo, sidebarSection, canDelete: true })
+                await ticketPage.deleteTicket({ ticketInfo, sidebarSection, canDelete: true })
             }
         })
     });
@@ -125,7 +123,7 @@ test.describe("Ticket actions", () => {
             page.goto("/"));
 
         await test.step("Step 2: Create a new ticket", async () => {
-            await ticketPage.createNewTicket({ neetoPlaywrightUtilities, user, ticketInfo: ticketsInfo[0] });
+            await ticketPage.createNewTicket({ user, ticketInfo: ticketsInfo[0] });
             await expect(page.locator(THREE_DOTS_SPINNER)).toBeHidden();
             await expect(page.locator(TABLE_BODY_SELECTOR)
                 .getByRole('row', { name: new RegExp(ticketsInfo[0].subject, 'i') })).toBeVisible({ timeout: 10000 });
@@ -144,7 +142,6 @@ test.describe("Ticket actions", () => {
                 selectValueContainer: TICKET_ACTION_BUTTON_SELECTORS.subheaderActionsDropdown,
                 selectMenu: COMMON_SELECTORS.dropdownContainer,
                 value: COMMON_TEXTS.moveToTrash,
-                neetoPlaywrightUtilities,
             });
 
             await page.reload();
@@ -158,7 +155,7 @@ test.describe("Ticket actions", () => {
             ticketPage.verifyDetailsOfTicket({ ticketInfo: { ...ticketsInfo[0], status: TICKET_STATUS.trash }, user }));
 
         await test.step("Step 6: Deleting the trashed ticket", async () =>
-            await ticketPage.deleteTicket({ neetoPlaywrightUtilities, ticketInfo: ticketsInfo[0], sidebarSection, canDelete: true }));
+            await ticketPage.deleteTicket({ ticketInfo: ticketsInfo[0], sidebarSection, canDelete: true }));
     });
 
 
@@ -169,7 +166,7 @@ test.describe("Ticket actions", () => {
             page.goto("/"));
 
         await test.step("Step 2: Create two new tickets ", async () => {
-            await ticketPage.createNewTicket({ neetoPlaywrightUtilities, user, ticketInfo: ticketsInfo[0] });
+            await ticketPage.createNewTicket({ user, ticketInfo: ticketsInfo[0] });
             await expect(page.locator(THREE_DOTS_SPINNER)).toBeHidden();
             await expect(page.locator(TABLE_BODY_SELECTOR)
                 .getByRole('row', { name: new RegExp(ticketsInfo[0].subject, 'i') })).toBeVisible({ timeout: 10000 });
@@ -179,7 +176,7 @@ test.describe("Ticket actions", () => {
 
             ticketNumber1 = String(parseInt(ticketButtonContent));
 
-            await ticketPage.createNewTicket({ neetoPlaywrightUtilities, user, ticketInfo: ticketsInfo[1] });
+            await ticketPage.createNewTicket({ user, ticketInfo: ticketsInfo[1] });
             await expect(page.locator(THREE_DOTS_SPINNER)).toBeHidden();
             await expect(page.locator(TABLE_BODY_SELECTOR)
                 .getByRole('row', { name: new RegExp(ticketsInfo[1].subject, 'i') })).toBeVisible({ timeout: 10000 });
@@ -235,10 +232,10 @@ test.describe("Ticket actions", () => {
         })
 
         await test.step("Step 8: Deleting the newly created ticket", async () => {
-            await ticketPage.deleteTicket({ neetoPlaywrightUtilities, ticketInfo: ticketsInfo[1], sidebarSection });
+            await ticketPage.deleteTicket({ ticketInfo: ticketsInfo[1], sidebarSection });
             await sidebarSection.clickOnSubLink(TICKET_BUTTON_SELECTORS.allTicketsLabel);
             await expect(page.locator(THREE_DOTS_SPINNER)).toBeHidden({ timeout: 10000 });
-            await ticketPage.deleteTicket({ neetoPlaywrightUtilities, ticketInfo: ticketsInfo[0], sidebarSection });
+            await ticketPage.deleteTicket({ ticketInfo: ticketsInfo[0], sidebarSection });
         })
     });
 
@@ -249,7 +246,7 @@ test.describe("Ticket actions", () => {
             page.goto("/"));
 
         await test.step("Step 2: Create a new ticket", async () => {
-            await ticketPage.createNewTicket({ neetoPlaywrightUtilities, user, ticketInfo: ticketsInfo[0] });
+            await ticketPage.createNewTicket({ user, ticketInfo: ticketsInfo[0] });
             await expect(page.locator(THREE_DOTS_SPINNER)).toBeHidden();
             await expect(page.locator(TABLE_BODY_SELECTOR)
                 .getByRole('row', { name: new RegExp(ticketsInfo[0].subject, 'i') })).toBeVisible({ timeout: 10000 });
@@ -276,7 +273,7 @@ test.describe("Ticket actions", () => {
 
         await test.step("Step 5: Deleting the newly created ticket", async () => {
             await sidebarSection.clickOnSubLink(TICKET_BUTTON_SELECTORS.allTicketsLabel);
-            await ticketPage.deleteTicket({ neetoPlaywrightUtilities, ticketInfo: ticketsInfo[0], sidebarSection });
+            await ticketPage.deleteTicket({ ticketInfo: ticketsInfo[0], sidebarSection });
         })
     });
 })

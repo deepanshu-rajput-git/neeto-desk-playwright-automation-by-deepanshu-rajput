@@ -12,12 +12,12 @@ test.describe("Ticket Page", () => {
         ticketInfo = generateTicketInfo({ user });
     });
 
-    test("should create a new ticket", async ({ page, ticketPage, neetoPlaywrightUtilities, sidebarSection }) => {
+    test("should create a new ticket", async ({ page, ticketPage, sidebarSection }) => {
         await test.step("Step 1: Navigate to home page", () =>
             page.goto("/"));
 
         await test.step("Step 2: Create a new ticket", async () =>
-            await ticketPage.createNewTicket({ neetoPlaywrightUtilities, user, ticketInfo }));
+            await ticketPage.createNewTicket({ user, ticketInfo }));
 
         await test.step("Step 3: Verify details of newly created ticket", () =>
             ticketPage.verifyDetailsOfTicket({ ticketInfo, user }));
@@ -28,7 +28,7 @@ test.describe("Ticket Page", () => {
         });
 
         await test.step("Step 5: Delete the newly created ticket", () =>
-            ticketPage.deleteTicket({ neetoPlaywrightUtilities, ticketInfo, sidebarSection }));
+            ticketPage.deleteTicket({ ticketInfo, sidebarSection }));
     });
 
     test("should not create new ticket without required fields", async ({ page, ticketPage }) => {

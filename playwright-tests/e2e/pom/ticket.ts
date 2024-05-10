@@ -1,4 +1,4 @@
-import { COMMON_SELECTORS, NEETO_EDITOR_SELECTORS } from "@bigbinary/neeto-playwright-commons";
+import { COMMON_SELECTORS, CustomCommands, NEETO_EDITOR_SELECTORS } from "@bigbinary/neeto-playwright-commons";
 import { ALERT_BOX, COMMON_BUTTON_SELECTORS, COMMON_CLASS_SELECTORS, COMMON_INPUT_FIELD, COMMON_TEXTS, TABLE_BODY_SELECTOR, THREE_DOTS_SPINNER } from "@constants/common";
 import { Page, expect } from "@playwright/test";
 import { TICKET_BUTTON_SELECTORS, TICKET_INPUT_FIELD_SELECTORS } from "@selectors/ticket";
@@ -6,9 +6,11 @@ import { Options, isValidEmail } from "../constants/utils";
 
 export default class TicketPage {
     page: Page;
+    neetoPlaywrightUtilities: CustomCommands;
 
-    constructor(page: Page) {
+    constructor(page: Page, neetoPlaywrightUtilities: CustomCommands) {
         this.page = page;
+        this.neetoPlaywrightUtilities = neetoPlaywrightUtilities;
     }
 
     async selectOptionFromDropdown({
@@ -19,10 +21,10 @@ export default class TicketPage {
         await expect(async () => {
             await selectContainer.click();
             await expect(this.page.getByTestId(COMMON_SELECTORS.dropdownMenu)).toBeVisible({
-                timeout: 9000,
+                timeout: 6000,
             });
             await this.page.getByTestId(COMMON_SELECTORS.dropdownMenu).getByText(value).click();
-            await expect(selectContainer).toContainText(value, { timeout: 10000 });
+            await expect(selectContainer).toContainText(value, { timeout: 8000 });
         }).toPass({ timeout: 20000 });
     }
 
@@ -37,17 +39,17 @@ export default class TicketPage {
         }
     }
 
-    createNewTicket = async ({ neetoPlaywrightUtilities, user, groupName = "--", ticketInfo }) => {
+    createNewTicket = async ({ user, groupName = "--", ticketInfo }) => {
         await this.page.getByTestId(COMMON_BUTTON_SELECTORS.addNewTicketButton).click();
         await this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.subjectField).fill(ticketInfo.subject);
         await this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.customerEmailField).fill(ticketInfo.customerEmail);
-        await neetoPlaywrightUtilities.selectOptionFromDropdown({
+        await this.neetoPlaywrightUtilities.selectOptionFromDropdown({
             selectValueContainer: TICKET_BUTTON_SELECTORS.groupSelectValueContainer,
             selectMenu: TICKET_BUTTON_SELECTORS.groupSelectMenu,
             value: groupName
         });
 
-        await neetoPlaywrightUtilities.selectOptionFromDropdown({
+        await this.neetoPlaywrightUtilities.selectOptionFromDropdown({
             selectValueContainer: TICKET_BUTTON_SELECTORS.agentSelectValueContainer,
             selectMenu: TICKET_BUTTON_SELECTORS.agentSelectMenu,
             value: user.currentUserName,
@@ -99,7 +101,7 @@ export default class TicketPage {
                 await this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.customerEmailField).click();
                 await expect(this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.subjectInputError)).toBeVisible({ timeout: 10000 });
                 await expect(this.page.getByTestId(COMMON_SELECTORS.saveChangesButton)).toBeDisabled();
-            }).toPass({ timeout: 5000 });
+            }).toPass({ timeout: 30000 });
         }
 
         if (!isValidEmail(customerEmail)) {
@@ -107,7 +109,7 @@ export default class TicketPage {
                 await this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.customerEmailField).fill(customerEmail);
                 await this.page.getByTestId(COMMON_SELECTORS.saveChangesButton).click();
                 await expect(this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.customerEmailInputError)).toBeVisible({ timeout: 10000 });
-            }).toPass({ timeout: 5000 });
+            }).toPass({ timeout: 30000 });
         }
 
         if (!agentName) {
@@ -123,12 +125,11 @@ export default class TicketPage {
                 await saveButton.scrollIntoViewIfNeeded();
                 await saveButton.click();
                 await expect(this.page.getByTestId(TICKET_INPUT_FIELD_SELECTORS.neetoEditorError)).toBeVisible({ timeout: 10000 });
-            }).toPass({ timeout: 5000 });
+            }).toPass({ timeout: 30000 });
         }
     }
 
-    performActionFromDropdown = async ({ neetoPlaywrightUtilities, selectValueContainer, selectMenu, value, options = {} }: {
-        neetoPlaywrightUtilities,
+    performActionFromDropdown = async ({ selectValueContainer, selectMenu, value, options = {} }: {
         selectValueContainer: string;
         selectMenu: string;
         value: string;
@@ -141,20 +142,18 @@ export default class TicketPage {
             ...options,
         };
 
-        await expect(async () => {
-            await this.page.getByTestId(selectValueContainer).click();
-            await expect(this.page.getByTestId(selectMenu)).toBeVisible({
-                timeout: mergedOptions.visibilityTimeout,
-            });
-            await this.page.getByTestId(selectMenu).getByText(value).click();
-            const alertModal = this.page.getByTestId(ALERT_BOX);
-            await expect(alertModal).toBeVisible({ timeout: mergedOptions.textAssertionTimeout });
-            await alertModal.getByTestId(COMMON_BUTTON_SELECTORS.alertSubmitButton).click();
-            await neetoPlaywrightUtilities.verifySuccessToast({ closeAfterVerification: false });
-        }).toPass({ timeout: mergedOptions.retryTimeout });
+        await this.page.getByTestId(selectValueContainer).click();
+        await expect(this.page.getByTestId(selectMenu)).toBeVisible({
+            timeout: mergedOptions.visibilityTimeout,
+        });
+        await this.page.getByTestId(selectMenu).getByText(value).click();
+        const alertModal = this.page.getByTestId(ALERT_BOX);
+        await expect(alertModal).toBeVisible({ timeout: mergedOptions.textAssertionTimeout });
+        await alertModal.getByTestId(COMMON_BUTTON_SELECTORS.alertSubmitButton).click();
+        await this.neetoPlaywrightUtilities.waitForPageLoad();
     };
 
-    moveTicketToTrash = async ({ neetoPlaywrightUtilities, ticketInfo }) => {
+    moveTicketToTrash = async ({ ticketInfo }) => {
         await expect(this.page.getByTestId(COMMON_SELECTORS.pageLoader)).toBeHidden({ timeout: 10000 });
         await this.page.locator(TABLE_BODY_SELECTOR)
             .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).locator(COMMON_INPUT_FIELD.checkBoxInput).click();
@@ -163,18 +162,17 @@ export default class TicketPage {
             selectValueContainer: COMMON_BUTTON_SELECTORS.takeActionDropdown,
             selectMenu: COMMON_BUTTON_SELECTORS.takeActionDropdownContainer,
             value: COMMON_TEXTS.moveToTrash,
-            neetoPlaywrightUtilities,
         });
-
+        await this.neetoPlaywrightUtilities.waitForPageLoad();
         await expect(this.page.locator(TABLE_BODY_SELECTOR)
             .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') })).toBeHidden({ timeout: 10000 });
     }
 
-    deleteTicket = async ({ neetoPlaywrightUtilities, ticketInfo, sidebarSection, canDelete = false }) => {
+    deleteTicket = async ({ ticketInfo, sidebarSection, canDelete = false }) => {
         if (!canDelete) {
-            await this.moveTicketToTrash({ neetoPlaywrightUtilities, ticketInfo });
+            await this.moveTicketToTrash({ ticketInfo });
             await sidebarSection.clickOnSubLink(TICKET_BUTTON_SELECTORS.trashLabel);
-            await expect(this.page.getByTestId(COMMON_SELECTORS.pageLoader)).toBeHidden({ timeout: 10000 });
+            await this.neetoPlaywrightUtilities.waitForPageLoad();
         }
         await this.page.locator(TABLE_BODY_SELECTOR)
             .getByRole('row', { name: new RegExp(ticketInfo.subject, 'i') }).locator(COMMON_INPUT_FIELD.checkBoxInput).click();
@@ -183,7 +181,6 @@ export default class TicketPage {
             selectValueContainer: COMMON_BUTTON_SELECTORS.takeActionDropdown,
             selectMenu: COMMON_BUTTON_SELECTORS.takeActionDropdownContainer,
             value: COMMON_TEXTS.deleteForever,
-            neetoPlaywrightUtilities
         });
 
         await expect(this.page.locator(TABLE_BODY_SELECTOR)

@@ -6,19 +6,7 @@ import { VIEW_TEXTS } from "@constants/texts/view";
 import { VIEW_SELECTORS } from "@selectors/addNewView";
 import { TAXONOMY_TEXTS } from "@constants/texts/taxonomy";
 import { TAXONOMY_BUTTON_SELECTORS } from "@selectors/taxonomy";
-
-const taxonomies = [
-    {
-        defaultValue: TAXONOMY_TEXTS.agent,
-        singularLabel: TAXONOMY_TEXTS.member,
-        pluralLabel: TAXONOMY_TEXTS.members
-    },
-    {
-        defaultValue: TAXONOMY_TEXTS.group,
-        singularLabel: TAXONOMY_TEXTS.team,
-        pluralLabel: TAXONOMY_TEXTS.teams
-    }
-];
+import { TAXONOMIES as taxonomies } from "@constants/utils";
 
 test.describe("Taxonomy page", () => {
     test("should edit a taxonomy", async ({ page, taxonomyPage, neetoPlaywrightUtilities }) => {
@@ -53,7 +41,6 @@ test.describe("Taxonomy page", () => {
                     defaultValue,
                     singularLabel,
                     pluralLabel,
-                    neetoPlaywrightUtilities
                 });
             }
         });
@@ -76,7 +63,7 @@ test.describe("Taxonomy page", () => {
             });
         });
 
-        await test.step("Step 4: Asserting taxonomy - Group", async () => {
+        await test.step("Step 6: Asserting taxonomy - Group", async () => {
             await page.getByTestId(COMMON_BUTTON_SELECTORS.navTabLink('settings')).click();
             await neetoPlaywrightUtilities.waitForPageLoad();
             const groupButton = page.getByTestId(TAXONOMY_BUTTON_SELECTORS.groupsSettingOption);
@@ -99,15 +86,15 @@ test.describe("Taxonomy page", () => {
                 .toContainText(new RegExp(TAXONOMY_TEXTS.team, 'i'));
         });
 
-        await test.step("Step 6: Resetting to default", async () => {
+        await test.step("Step 7: Resetting to default", async () => {
             await page.getByTestId(COMMON_SELECTORS.sidebarSubLink('taxonomy')).click();
             await neetoPlaywrightUtilities.waitForPageLoad();
             for (const { defaultValue } of taxonomies) {
-                await taxonomyPage.restoreToDefault({ defaultValue, neetoPlaywrightUtilities });
+                await taxonomyPage.restoreToDefault({ defaultValue });
             }
         });
 
-        await test.step("Step 7: Assertion of restoring to default", async () => {
+        await test.step("Step 8: Assertion of restoring to default", async () => {
             await taxonomyPage.verifyText({
                 container: COMMON_BUTTON_SELECTORS.navTabLink('agent'),
                 text: TAXONOMY_TEXTS.agents

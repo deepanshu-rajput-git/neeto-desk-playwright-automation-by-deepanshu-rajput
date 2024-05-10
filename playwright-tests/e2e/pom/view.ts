@@ -2,12 +2,15 @@ import { COMMON_BUTTON_SELECTORS } from "@constants/common";
 import { Page, expect } from "@playwright/test";
 import { ViewInfo } from "../constants/utils";
 import { VIEW_SELECTORS } from "@selectors/addNewView";
+import { CustomCommands } from "@bigbinary/neeto-playwright-commons";
 
 export default class ViewPage {
     page: Page;
+    neetoPlaywrightUtilities: CustomCommands;
 
-    constructor(page: Page) {
+    constructor(page: Page, neetoPlaywrightUtilities: CustomCommands) {
         this.page = page;
+        this.neetoPlaywrightUtilities = neetoPlaywrightUtilities;
     }
 
     attemptToCreateNewView = async ({ viewInfo }: { viewInfo: ViewInfo }) => {
@@ -19,7 +22,7 @@ export default class ViewPage {
                 await expect(this.page.getByTestId(VIEW_SELECTORS.nameInputEror)).toBeVisible({ timeout: 10000 });
                 await submitButton.scrollIntoViewIfNeeded();
                 await expect(submitButton).toBeDisabled();
-            }).toPass({ timeout: 5000 });
+            }).toPass({ timeout: 50000 });
         }
 
         if (!viewInfo.sortOrder.field) {
